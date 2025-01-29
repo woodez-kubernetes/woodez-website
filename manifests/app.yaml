@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: woodez-website
+  namespace: argocd
+spec:
+  source:
+    repoURL: https://github.com/woodez-kubernetes/woodez-website.git
+    targetRevision: master
+    path: manifests
+  destination:
+    server: https://kubernetes.default.svc # Use your own cluster server
+    namespace: woodez
+  project: default

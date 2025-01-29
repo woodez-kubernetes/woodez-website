@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: woodez-website
+  labels:
+    app: woodez-website
+  namespace: woodez
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: woodez-website
+  template:
+    metadata:
+      labels:
+        app: woodez-website
+    spec:
+      containers:
+      - name: woodez-website
+        image: kwood475/woodez-website:latest
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: woodez-website-service 
+  labels:
+    app: woodez-website
+  namespace: woodez
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: woodez-website
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-woodez-website
+  namespace: woodez
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: www.woodez.org
+    http:
+      paths:
+      - backend:
+          service:
+            name: woodez-website-service
+            port:
+              number: 80
+        path: /
+        pathType: Exact
